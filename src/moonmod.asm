@@ -48,19 +48,27 @@ main
 	or a
 	ld hl,missingfilenamestr
 	ret z
-	ld (.inputfilename),de
 ;load file
-	ld hl,loadingstr
+	push de
+	ld hl,loading1str
 	call print_hl
-.inputfilename=$+1
-	ld hl,0
+	pop hl
+	push hl
+	call print_hl_asciz
+	ld hl,loading2str
+	call print_hl
+	pop hl
 	call musicload
 	ld hl,loaderrorstr
 	ret nz
 	ld hl,initokstr
 	call print_hl
 ;start playing
-	ld hl,playingstr
+	ld hl,playing1str
+	call print_hl
+	ld hl,modheader.songname
+	call print_hl_asciz
+	ld hl,playing2str
 	call print_hl
 	di
 	call musicstarttimer
@@ -242,10 +250,14 @@ missingfilenamestr
 	db "Usage: moonmod <file>\r\n$"
 playerinitstr
 	db "Initializing player... $"
-loadingstr
-	db "Loading module... $"
-playingstr
-	db "Playing module... $"
+loading1str
+	db "Loading \"$"
+loading2str
+	db "\"... $"
+playing1str
+	db "Playing \"$"
+playing2str
+	db "\"... $"
 loaderrorstr
 	db "Failed!\r\n$"
 donestr
